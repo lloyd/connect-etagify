@@ -86,6 +86,35 @@ describe('an etagified resource', function() {
   });
 });
 
+describe('an incrementally written etagified resource', function() {
+  it('first request shouldnt have etag', function(done) {
+    http.get({
+      host: '127.0.0.1',
+      port: port,
+      path: '/page2'
+    }, function(res) {
+      res.statusCode.should.equal(200);
+      Object.keys(res.headers).should.not.include('etag');
+      done();
+    });
+  });
+
+  var etag;
+
+  it('second request should have etag', function(done) {
+    http.get({
+      host: '127.0.0.1',
+      port: port,
+      path: '/page2'
+    }, function(res) {
+      res.statusCode.should.equal(200);
+      Object.keys(res.headers).should.include('etag');
+      etag = res.headers['etag'];
+      etag.should.equal('"bdb4fd9623de883e278a8539d029de2f"');
+      done();
+    });
+  });
+});
 
 describe('a non-etagified resource', function() {
   it('first request shouldnt have etag', function(done) {

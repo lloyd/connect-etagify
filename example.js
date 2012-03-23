@@ -15,6 +15,24 @@ app.get('/page', function(req, res) {
   res.send("pulitzer prize. bam.");
 });
 
+// this is an example route that constructs and serves a non-static but
+// cachable page - that's incrementally written
+app.get('/page2', function(req, res) {
+  res.setHeader('Cache-Control', 'public, max-age=0');  
+  res.etagify();
+
+  res.write("pulitzer ");
+  process.nextTick(function() {
+    res.write("prize. ");    
+    process.nextTick(function() {
+      res.write("bam.");
+      process.nextTick(function() {
+        res.end();
+      });
+    });
+  });
+});
+
 // this is and example route that is a rest api request
 app.get('/api', function(req, res) {
   // for api calls, don't use etags and don't allow client to cache

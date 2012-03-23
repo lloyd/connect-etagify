@@ -28,7 +28,7 @@ module.exports = function() {
       var write = res.write;
       res.write = function(chunk) {
         hash.update(chunk);
-        write.apply(res, chunk);
+        write.call(res, chunk);
       };
 
       var end = res.end;
