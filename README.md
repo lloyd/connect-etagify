@@ -42,3 +42,8 @@ server - don't.  If you serve non-static content that is gauranteed
 not to change between server restarts in production, the etagify
 middleware makes it easy to serve this content with proper etag
 headers based on a hash of your content.
+
+## see also
+
+[cachify](https://github.com/mozilla/node-cachify) for a way to get
+awesome long term caching of your static resources.
