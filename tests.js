@@ -49,6 +49,8 @@ describe('an etagified resource', function() {
       res.statusCode.should.equal(200);
       Object.keys(res.headers).should.include('etag');
       etag = res.headers['etag'];
+      etag.should.equal('"bdb4fd9623de883e278a8539d029de2f"');
+
       done();
     });
   });
