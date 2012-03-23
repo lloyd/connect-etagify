@@ -21,6 +21,6 @@
     "express": "2.x"
   },
   "scripts": {
-    "test": "mocha -R spec"
+    "test": "mocha -R spec tests.js"
   }
 }
