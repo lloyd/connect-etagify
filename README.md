@@ -1,7 +1,6 @@
 ## etagify
 
-Adding [E-Tag](http://wikipedia.org/ETag) headers to cachable but non-static
-content since 2012.
+NodeJS connect middleware.  Adding [ETag](http://en.wikipedia.org/wiki/HTTP_ETag) headers to cachable but non-static content since 2012.
 
 ### before
 
@@ -43,7 +42,7 @@ not to change between server restarts in production, the etagify
 middleware makes it easy to serve this content with proper etag
 headers based on a hash of your content.
 
-## see also
+## see also...
 
-[cachify](https://github.com/mozilla/node-cachify) for a way to get
+...[cachify](https://github.com/mozilla/connect-cachify) for a way to get
 awesome long term caching of your static resources.
