@@ -1,0 +1,25 @@
+{
+  "author": "Lloyd Hilaiel <lloyd@hilaiel.com> (http://lloyd.io)",
+  "name": "etagify",
+  "description": "Adds ETag headers to cachable, but non-static content.",
+  "version": "0.0.1",
+  "homepage": "https://github.com/lloyd/node-etagify",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lloyd/node-etagify.git"
+  },
+  "main": "etagify.js",
+  "engines": {
+    "node": ">= 0.4.7"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "should": "*",
+    "mocha": "*",
+    "express": "*"
+  },
+  "scripts": {
+    "test": "mocha -R spec"
+  }
+}
