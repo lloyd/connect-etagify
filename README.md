@@ -1,7 +1,7 @@
 ## etagify
 
 Adding [E-Tag](http://wikipedia.org/ETag) headers to cachable but non-static
-content since *2012*.
+content since 2012.
 
 ### before
 
@@ -22,7 +22,7 @@ content since *2012*.
 
     app.use(require('etagify')());
 
-    app.get(function(req, res) {
+    app.get('/page', function(req, res) {
       res.etagify();
       res.send("pulitzer prize. bam.");
     });
@@ -34,4 +34,11 @@ content since *2012*.
 
 ## words
 
-ETag headers are a client caching mechanism that when applied let you push fewer bits over the wire and make web pages load faster.  Pages you serve through connect's static middleware already have proper ETag headers.  All other dynamic request - like templates rendered on the server - don't.  If you serve non-static content that is gauranteed not to change between server restarts in production, the etagify middleware makes it easy to serve this content with proper etag headers based on a hash of your content.
+ETag headers are a client caching mechanism that when applied let you
+push fewer bits over the wire and make web pages load faster.  Pages
+you serve through connect's static middleware already have proper ETag
+headers.  All other dynamic request - like templates rendered on the
+server - don't.  If you serve non-static content that is gauranteed
+not to change between server restarts in production, the etagify
+middleware makes it easy to serve this content with proper etag
+headers based on a hash of your content.
