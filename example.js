@@ -7,8 +7,8 @@ app.use(require('./etagify.js')());
 app.get('/page', function(req, res) {
   // apply cache headers - allow caching but force revalidation all
   // the time
-  res.setHeader('Cache-Control', 'public, max-age=0');  
-  
+  res.setHeader('Cache-Control', 'public, max-age=0');
+
   // use ETags
   res.etagify();
 
@@ -18,12 +18,12 @@ app.get('/page', function(req, res) {
 // this is an example route that constructs and serves a non-static but
 // cachable page - that's incrementally written
 app.get('/page2', function(req, res) {
-  res.setHeader('Cache-Control', 'public, max-age=0');  
+  res.setHeader('Cache-Control', 'public, max-age=0');
   res.etagify();
 
   res.write("pulitzer ");
   process.nextTick(function() {
-    res.write("prize. ");    
+    res.write("prize. ");
     process.nextTick(function() {
       res.write("bam.");
       process.nextTick(function() {
@@ -39,6 +39,20 @@ app.get('/api', function(req, res) {
   // results.
   res.setHeader('Cache-Control', 'no-cache, max-age=0');
   res.send("no etagify here, because the results aren't cachable.");
+});
+
+// And whos response is cachable but varies by certain header fields
+app.get('/vary', function(req, res) {
+  res.etagify();
+
+  res.setHeader('Cache-Control', 'public, max-age=0');
+  res.setHeader('Vary', 'X-Foo, Accept-Languages');
+
+  var body = "This body varies by some headers\n";
+  if (req.headers.hasOwnProperty('x-foo')) body += req.headers['x-foo'] + '\n';
+  if (req.headers.hasOwnProperty('accept-languages')) body += req.headers['accept-languages'] + '\n';
+
+  res.send(body);
 });
 
 app.listen(process.env['PORT'] || 8080, '127.0.0.1');

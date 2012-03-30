@@ -1,6 +1,8 @@
 const
 should = require('should'),
-http = require('http');
+http = require('http'),
+assert = require('assert'),
+crypto = require('crypto');
 
 process.env['PORT'] = 0;
 var app = require('./example.js').app;
@@ -145,4 +147,133 @@ describe('a non-etagified resource', function() {
   });
 });
 
+describe('responses with vary headers', function() {
+  var requests = [
+    {
+      headers: {
+      },
+      etag: null
+    },
+    {
+      headers: {
+        'Accept-Languages': 'en-US'
+      },
+      etag: null
+    },
+    {
+      headers: {
+        'Accept-Languages': 'en-us'
+      },
+      etag: null
+    },
+    {
+      headers: {
+        'Accept-Languages': 'en-US',
+        'X-Foo': ''
+      },
+      etag: null
+    },
+    {
+      headers: {
+        'Accept-Languages': '',
+        'X-Foo': 'foo'
+      },
+      etag: null
+    },
+    {
+      headers: {
+        'Accept-Languages': 'it-CH'
+      },
+      etag: null
+    },
+    {
+      headers: {
+        'Accept-Languages': 'en-US',
+        'X-Foo': 'foo'
+      },
+      etag: null
+    },
+    {
+      headers: {
+        'Accept-Languages': 'en-US',
+        'X-Foo': 'bar'
+      },
+      etag: null
+    },
+    {
+      headers: {
+        'X-Foo': 'foo'
+      },
+      etag: null
+    }
+  ];
 
+  function fetch(headers, cb) {
+    http.get({
+      host: '127.0.0.1',
+      port: port,
+      path: '/vary',
+      headers: headers
+    }, function(res) {
+      var body = "";
+      res.on('data', function(chunk) { body += chunk });
+      res.on('end', function() {
+        cb(res.headers['etag'], body, res.statusCode);
+      });
+    });
+  }
+
+  function stringify(r) {
+    var str = "";
+    Object.keys(r.headers).forEach(function(h) {
+      str += " " + h + ":" + r.headers[h];
+    });
+    return str;
+  }
+
+  // make each request once to let the server calculate ETags
+  requests.forEach(function(r) {
+    it('should not have an ETag header on first request:' + stringify(r), function(done) {
+      fetch(r.headers, function(etag, body, code) {
+        (code).should.equal(200);
+        should.strictEqual(etag, undefined);
+        done();
+      });
+    });
+  });
+
+  // for each request, fetch it once and verify that ETag matches
+  // md5 of contents
+  requests.forEach(function(r) {
+    it('should have correct ETag header on subsequent requests:' + stringify(r), function(done) {
+      fetch(r.headers, function(etag, body, code) {
+        (code).should.equal(200);
+        var md5 = crypto.createHash('md5').update(body).digest('hex');
+        should.strictEqual(etag, '"' + md5 + '"');
+        r.etag = etag;
+        done();
+      });
+    });
+  });
+
+  // verify 304s returned when proper etags included for all requests
+  requests.forEach(function(r) {
+    it('should return 304 when sent with If-None-Match:' + stringify(r), function(done) {
+      r.headers['If-None-Match'] = r.etag;
+      fetch(r.headers, function(etag, body, code) {
+        (code).should.equal(304);
+        done();
+      });
+    });
+  });
+
+  // verify all etags are distinct, given we know all content is distinct
+  it('all ETags should be distinct', function() {
+    var etags = [];
+    requests.forEach(function(r) {
+      (etags.indexOf(r.etag)).should.equal(-1);
+      etags.push(r.etag);
+    });
+
+  });
+});
