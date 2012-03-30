@@ -2,7 +2,7 @@
   "author": "Lloyd Hilaiel <lloyd@hilaiel.com> (http://lloyd.io)",
   "name": "etagify",
   "description": "Adds ETag headers to cachable, but non-static content.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "homepage": "https://github.com/lloyd/connect-etagify",
   "repository": {
     "type": "git",
