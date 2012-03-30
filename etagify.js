@@ -5,7 +5,20 @@ var NULL = new Buffer(1);
 NULL.writeUInt8(0x0, 0);
 
 module.exports = function() {
-  // path to etag mapping
+  // A data structure that holds runtime calculated content hashes.
+  // Example:
+  // {
+  //   '/path/to/resource/with/vary/headers': {
+  //     vary: [ 'Accept-Encoding', 'Accept-Language' ],
+  //     md5s: {
+  //       <binary hash of variable header values>: <md5 of content>,
+  //       <another binary hash of variable header values>: <another md5 of content>
+  //     }
+  //   },
+  //   '/path/to/resource/without/vary/headers': {
+  //     md5: <md5 of content>
+  //   }
+  // }
   var etags = {
   };
 
